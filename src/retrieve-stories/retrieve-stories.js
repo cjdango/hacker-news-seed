@@ -1,32 +1,41 @@
-import EventEmitter from 'events';
-
 export default function makeRetrieveStories({
   fetchTopStories,
   fetchItem,
+  emitter,
 }) {
-  const HNEmitter = new EventEmitter();
-
   function resolveItems(ids) {
-    ids.forEach(async id => {
-      const { data: item } = await fetchItem(id);
+    return Promise.allSettled(ids.map(async id => {
+      const [{ data: item }, err] = await fetchItem(id);
 
-      if (!item) {
-        console.log('item not found.')
+      if (err) {
+        emitter.emit('skip', id);
         return;
       }
 
-      HNEmitter.emit(item.type, item);
+      if (!item) {
+        emitter.emit('skip', id);
+        return;
+      }
+
+      emitter.emit(item.type, item);
 
       if (item.kids) {
-        resolveItems(item.kids)
+        await resolveItems(item.kids)
       }
-    })
+    }));
   };
 
   return function retrieveStories() {
     fetchTopStories()
-      .then(({ data: storyIDs }) => resolveItems(storyIDs));
+      .then(async ([response, err]) => {
+        if (err) {
+          return console.error(err);
+        }
 
-    return HNEmitter;
+        await resolveItems(response.data);
+        emitter.emit('finish');
+      })
+
+    return emitter;
   }
 }

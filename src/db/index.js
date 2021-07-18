@@ -3,7 +3,9 @@ import makeStoryDB from './story';
 import makeJobDB from './job';
 import makeCommentDB from './comment';
 
-const pool = new Pool();
+const pool = new Pool({
+  max: 20
+});
 
 function makeDB() {
   return pool.connect();
@@ -18,5 +20,3 @@ export {
   job,
   comment,
 }
-
-
