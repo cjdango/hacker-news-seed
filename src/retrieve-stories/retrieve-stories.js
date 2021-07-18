@@ -5,12 +5,14 @@ export default function makeRetrieveStories({
 }) {
   function resolveItems(ids) {
     return Promise.allSettled(ids.map(async id => {
-      const [{ data: item }, err] = await fetchItem(id);
+      const [response, err] = await fetchItem(id);
 
       if (err) {
         emitter.emit('skip', id);
         return;
       }
+
+      const { data: item } = response;
 
       if (!item) {
         emitter.emit('skip', id);
