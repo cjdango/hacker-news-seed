@@ -7,7 +7,7 @@
     "babel": "babel --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\"",
     "build": "npm run clean && npm run babel -- src -d dist/src && npm run babel -- scripts -d dist/scripts && ncp .env dist/.env",
     "clean": "rimraf dist",
-    "prepare:tables": "node -r dotenv/config dist/scripts/create-tables.js",
+    "prepare:tables": "node -r dotenv/config dist/scripts/create-tables/index.js",
     "start": "npm run build && npm run prepare:tables && node -r dotenv/config dist/src/index.js",
     "test": "jest src --watch"
   },
@@ -26,6 +26,7 @@
     "@babel/preset-env": "^7.14.7",
     "babel-jest": "^27.0.6",
     "babel-plugin-inline-dotenv": "^1.6.0",
+    "faker": "^5.5.3",
     "jest": "^27.0.6",
     "ncp": "^2.0.0",
     "rimraf": "^3.0.2"

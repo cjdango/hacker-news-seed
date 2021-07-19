@@ -14,7 +14,7 @@ export default function makeCommentDB({ makeDB }) {
       ON CONFLICT DO NOTHING;
     `);
 
-    await client.query(`
+    const result = await client.query(`
       INSERT INTO comments(id, by, parent)
       VALUES (${item.id}, '${item.by}', ${item.parent})
       ON CONFLICT DO NOTHING;
@@ -22,6 +22,8 @@ export default function makeCommentDB({ makeDB }) {
 
     await client.query('COMMIT');
 
-    await client.release();
+    client.release();
+
+    return result;
   }
 }
