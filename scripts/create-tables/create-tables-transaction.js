@@ -13,26 +13,30 @@ export default async function createTablesTransaction(client) {
       .query(`
           CREATE TABLE IF NOT EXISTS stories (
             id INTEGER PRIMARY KEY,
-            by VARCHAR NOT NULL
+            deleted BOOLEAN,
+            by VARCHAR,
+            time BIGINT,
+            text VARCHAR,
+            dead BOOLEAN,
+            kids INTEGER[],
+            url VARCHAR,
+            score INTEGER,
+            title VARCHAR,
+            descendants INTEGER
           );
         `);
 
     await client
       .query(`
-          CREATE TABLE IF NOT EXISTS jobs (
-            id INTEGER PRIMARY KEY,
-            by VARCHAR NOT NULL
-          );
+          CREATE TABLE IF NOT EXISTS jobs (LIKE stories INCLUDING ALL);
         `);
 
     await client
       .query(`
           CREATE TABLE IF NOT EXISTS comments (
-            id INTEGER PRIMARY KEY,
-            by VARCHAR NOT NULL,
-            parent INTEGER NOT NULL REFERENCES comment_parents(id)
+            LIKE stories INCLUDING ALL, parent INTEGER
           );
-        `);
+      `);
 
     await client.query('COMMIT');
 

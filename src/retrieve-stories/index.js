@@ -5,7 +5,7 @@ import EventEmitter from 'events';
 export const makeFetchTopStories = ({ httpClient }) =>
   async () => {
     try {
-      const response = await httpClient('https://hacker-news.firebaseio.com/v0/topstories.json' + '?&limitToFirst=2&orderBy="$key"');
+      const response = await httpClient('https://hacker-news.firebaseio.com/v0/topstories.json');
       return [response, null];
     } catch (error) {
       return [null, error];
